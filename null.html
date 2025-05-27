@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>System Unlocking</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 16px;
+      margin: 0;
+    }
+
+    #menu-bar {
+      background-color: #222;
+      color: white;
+      padding: 10px;
+      display: flex;
+      gap: 20px;
+      border-bottom: 2px solid #555;
+      font-weight: bold;
+      cursor: not-allowed;
+    }
+
+    #menu-bar div {
+      position: relative;
+    }
+
+    #menu-bar div:hover::after {
+      content: "ERROR!";
+      position: absolute;
+      top: 30px;
+      left: 0;
+      background: #900;
+      color: white;
+      padding: 5px 10px;
+      font-size: 12px;
+      white-space: nowrap;
+      border-radius: 5px;
+      z-index: 100;
+    }
+
+    #terminal {
+      white-space: pre-wrap;
+      line-height: 1.4;
+      padding: 20px;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      background: white;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div id="menu-bar">
+    <div>More</div>
+    <div>System</div>
+    <div>Help</div>
+  </div>
+
+  <div id="terminal"></div>
+  
+  <audio id="typeSound" src="https://www.soundjay.com/mechanical/keyboard-1.mp3" preload="auto"></audio>
+  <audio id="beepSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>  
+
+  <script>
+    const lines = [
+  "> Initializing system...",
+  "> Accessing secure sector...",
+  "> AUTH TOKEN: GryphWare@cliper",
+  "> UNLOCKING...",
+  "[WARNING] Unauthorized memory zone detected",
+  "[CRITICAL] Memory leak at address 0x0040F1E3",
+  "Error in `./a.out`: free(): invalid pointer: 0x0000000000401020",
+  "Aborted (core dumped)",
+  "> Attempting memory recovery...",
+  "[FAILURE] Heap corruption detected",
+  "[SYSTEM ALERT] Stack smashing attempt blocked",
+  "> SYSTEM OVERRIDE: BYPASS FAILURE",
+  "> SYSTEM OVERRIDE: RETRYING...",
+  "[TIMEOUT] Sector 12F unreachable",
+  "> Access denied: Root privilege required",
+  "[FORCE STOP] Kernel panic — not syncing: Fatal exception"
+];
+
+    const terminal = document.getElementById("terminal");
+    const typeSound = document.getElementById("typeSound");
+    const beepSound = document.getElementById("beepSound");
+
+    let i = 0;
+    let lineChar = 0;
+
+    function randomChar() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+      return chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    function typeLine() {
+      if (i < lines.length) {
+        const line = lines[i];
+
+        if (line === "github/GryphWare") {
+          let index = 0;
+          let fake = line.split('').map(() => randomChar());
+          const interval = setInterval(() => {
+            fake[index] = line[index];
+            terminal.innerHTML = terminal.innerHTML.replace(/github.*\n?$/, '') + fake.join('');
+            typeSound.currentTime = 0;
+            typeSound.play();
+            index++;
+            if (index >= line.length) {
+              clearInterval(interval);
+              terminal.innerHTML += "\n";
+              i++;
+              lineChar = 0;
+              setTimeout(typeLine, 300);
+            }
+          }, 80);
+        } else {
+          if (lineChar < line.length) {
+            terminal.innerHTML += line[lineChar++];
+            typeSound.currentTime = 0;
+            typeSound.play();
+            setTimeout(typeLine, 30);
+          } else {
+            terminal.innerHTML += "\n";
+            if (line.includes("free():")) {
+              beepSound.currentTime = 0;
+              beepSound.play();
+            }
+            i++;
+            lineChar = 0;
+            setTimeout(typeLine, 300);
+          }
+        }
+      } else {
+        terminal.innerHTML += "\n>_ <span class='cursor'></span>";
+      }
+    }
+
+    typeLine();
+  </script>
+</body>
+</html>
