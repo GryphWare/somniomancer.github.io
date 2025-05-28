@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>System Unlocking</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 16px;
+      margin: 0;
+    }
+
+    #menu-bar {
+      background-color: #222;
+      color: white;
+      padding: 10px;
+      display: flex;
+      gap: 20px;
+      border-bottom: 2px solid #555;
+      font-weight: bold;
+      cursor: not-allowed;
+    }
+
+    #menu-bar div {
+      position: relative;
+    }
+
+    #menu-bar div:hover::after {
+      content: "ERROR!";
+      position: absolute;
+      top: 30px;
+      left: 0;
+      background: #900;
+      color: white;
+      padding: 5px 10px;
+      font-size: 12px;
+      white-space: nowrap;
+      border-radius: 5px;
+      z-index: 100;
+    }
+
+    #terminal {
+      white-space: pre-wrap;
+      line-height: 1.4;
+      padding: 20px;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      background: white;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    #nextInput {
+      display: none;
+      background: black;
+      color: white;
+      border: none;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 16px;
+      width: 100%;
+      padding: 10px 20px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <div id="menu-bar">
+    <div>More</div>
+    <div>System</div>
+    <div>Help</div>
+  </div>
+
+  <div id="terminal"></div>
+  <input id="nextInput" placeholder="> Type 'next' to continue" />
+
+  <audio id="typeSound" src="https://www.soundjay.com/mechanical/keyboard-1.mp3" preload="auto"></audio>
+  <audio id="beepSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>  
+
+  <script>
+    const lines = [
+      "> Initializing system...",
+      "> Accessing secure sector...",
+      "> AUTH TOKEN: GryphWare@cliper",
+      "> UNLOCKING..."
+    ];
+
+    const personalInfo = [
+      "=== USER PROFILE ===",
+      "Name: ??????????????",
+      "Alias: GryphWare",
+      "Age: 19 (estimated)",
+      "Location: ?????????????",
+      "Goals: ??????????",
+      "Languages: C, Python, a bit of C++",
+      "Strengths: Hashmap, algorithmic thinking, self-learning",
+      "Tools: Termux, Linux basic, LeetCode",
+      "Status: Unlocking complete. System access: GRANTED",
+      "====================="
+    ];
+
+    const terminal = document.getElementById("terminal");
+    const typeSound = document.getElementById("typeSound");
+    const beepSound = document.getElementById("beepSound");
+    const input = document.getElementById("nextInput");
+
+    let i = 0;
+    let lineChar = 0;
+    let showingPersonalInfo = false;
+    let piIndex = 0;
+
+    function typeLine() {
+      if (i < lines.length) {
+        const line = lines[i];
+
+        if (lineChar < line.length) {
+          terminal.innerHTML += line[lineChar++];
+          typeSound.currentTime = 0;
+          typeSound.play();
+          setTimeout(typeLine, 30);
+        } else {
+          terminal.innerHTML += "\n";
+          if (line.includes("free():")) {
+            beepSound.currentTime = 0;
+            beepSound.play();
+          }
+
+          if (line.includes("UNLOCKING...")) {
+            waitForNext();
+          } else {
+            i++;
+            lineChar = 0;
+            setTimeout(typeLine, 300);
+          }
+        }
+      }
+    }
+
+    function waitForNext() {
+      input.style.display = "block";
+      input.focus();
+      input.addEventListener("keydown", function handler(e) {
+        if (e.key === "Enter" && input.value.trim().toLowerCase() === "next") {
+          input.removeEventListener("keydown", handler);
+          input.style.display = "none";
+          terminal.innerHTML += "> " + input.value.trim() + "\n";
+          showingPersonalInfo = true;
+          showPersonalInfo();
+        }
+      });
+    }
+
+    function showPersonalInfo() {
+      if (piIndex < personalInfo.length) {
+        terminal.innerHTML += personalInfo[piIndex++] + "\n";
+        typeSound.currentTime = 0;
+        typeSound.play();
+        setTimeout(showPersonalInfo, 150);
+      } else {
+        terminal.innerHTML += "\n>_ <span class='cursor'></span>";
+      }
+    }
+
+    typeLine();
+  </script>
+</body>
+</html>
