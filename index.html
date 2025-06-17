@@ -2,175 +2,198 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>System Unlocking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gryphware</title>
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      background-color: black;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0e0e0e;
       color: white;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 16px;
-      margin: 0;
+      scroll-behavior: smooth;
     }
 
-    #menu-bar {
-      background-color: #222;
-      color: white;
-      padding: 10px;
+    .nav-dots {
+      position: fixed;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
       display: flex;
+      flex-direction: column;
       gap: 20px;
-      border-bottom: 2px solid #555;
-      font-weight: bold;
-      cursor: not-allowed;
+      z-index: 999;
     }
 
-    #menu-bar div {
-      position: relative;
+    .nav-dots a {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: #555;
+      display: block;
+      transition: background-color 0.3s, transform 0.2s;
     }
 
-    #menu-bar div:hover::after {
-      content: "ERROR!";
-      position: absolute;
-      top: 30px;
-      left: 0;
-      background: #900;
-      color: white;
-      padding: 5px 10px;
-      font-size: 12px;
-      white-space: nowrap;
-      border-radius: 5px;
-      z-index: 100;
+    .nav-dots a.active,
+    .nav-dots a:hover {
+      background-color: #f0c000;
+      transform: scale(1.2);
     }
 
-    #terminal {
-      white-space: pre-wrap;
-      line-height: 1.4;
-      padding: 20px;
+    section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 80px 20px;
+      text-align: center;
     }
 
-    .cursor {
+    .hero {
+      background: linear-gradient(135deg, #0f0f0f, #222);
+    }
+
+    .section-dark {
+      background-color: #0f0f0f;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 1.2em;
+      color: #f0c000;
+      margin-bottom: 20px;
+    }
+
+    .scroll-down {
+      margin-top: 40px;
+      font-size: 2em;
+      animation: bounce 1.5s infinite;
+      cursor: pointer;
+      color: #f0c000;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(10px); }
+    }
+
+    .socials a {
       display: inline-block;
-      width: 10px;
-      background: white;
-      animation: blink 1s infinite;
+      margin: 10px;
+      color: #f0c000;
+      text-decoration: none;
+      font-size: 1.3em;
+      transition: transform 0.3s;
     }
 
-    @keyframes blink {
-      0% { opacity: 1; }
-      50% { opacity: 0; }
-      100% { opacity: 1; }
-    }
-
-    #nextInput {
-      display: none;
-      background: black;
+    .socials a:hover {
+      transform: scale(1.1);
       color: white;
-      border: none;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 16px;
-      width: 100%;
-      padding: 10px 20px;
-      box-sizing: border-box;
+    }
+
+    @media screen and (max-width: 768px) {
+      h1 {
+        font-size: 2em;
+      }
+
+      .scroll-down {
+        font-size: 1.5em;
+      }
+
+      .nav-dots {
+        left: 10px;
+        gap: 15px;
+      }
+
+      .nav-dots a {
+        width: 12px;
+        height: 12px;
+      }
     }
   </style>
 </head>
 <body>
-  <div id="menu-bar">
-    <div>More</div>
-    <div>System</div>
-    <div>Help</div>
+
+  <!-- Navigation Dots -->
+  <div class="nav-dots">
+    <a href="#hero" class="dot" id="dot-hero"></a>
+    <a href="#contact" class="dot" id="dot-contact"></a>
   </div>
 
-  <div id="terminal"></div>
-  <input id="nextInput" placeholder="> Type 'next' to continue" />
+  <audio id="bgMusic" src="" loop></audio>
 
-  <audio id="typeSound" src="https://www.soundjay.com/mechanical/keyboard-1.mp3" preload="auto"></audio>
-  <audio id="beepSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>  
+  <!-- Hero Section -->
+  <section class="hero" data-aos="fade-in" id="hero">
+    <h1 id="hero-title">GRYPHWARE</h1>
+    <div class="subtitle" id="hero-sub">a person.</div>
+    <div class="scroll-down" onclick="scrollToSection('contact')">⬇</div>
+  </section>
 
+  <!-- Contact Section -->
+  <section class="section-dark" data-aos="fade-up" id="contact">
+    <h1>Connect With Me</h1>
+    <div class="socials">
+      <a href="#">Facebook</a>
+      <a href="#">GitHub</a>
+      <a href="#">LinkedIn</a>
+    </div>
+  </section>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script>
-    const lines = [
-      "> Initializing system...",
-      "> Accessing secure sector...",
-      "> AUTH TOKEN: GryphWare@cliper",
-      "> UNLOCKING..."
-    ];
+    AOS.init();
 
-    const personalInfo = [
-      "=== USER PROFILE ===",
-      "Name: ?????",
-      "Alias: GryphWare",
-      "Age: 19 (estimated)",
-      "Location: ??????",
-      "Goals: ??????",
-      "Languages: C, Python, a bit of C++",
-      "Strengths: Hashmap, algorithmic thinking, self-learning",
-      "Tools: Termux, Linux basic, LeetCode",
-      "Status: Unlocking complete. System access: GRANTED",
-      "====================="
-    ];
+    const titles = ["GryphWare", "Astralynx Network Technology"];
+    const subtitles = ["a person.", "a non-exist company (maybe)."];
+    const titleEl = document.getElementById("hero-title");
+    const subEl = document.getElementById("hero-sub");
+    let currentIndex = 0;
 
-    const terminal = document.getElementById("terminal");
-    const typeSound = document.getElementById("typeSound");
-    const beepSound = document.getElementById("beepSound");
-    const input = document.getElementById("nextInput");
+    function switchText() {
+      titleEl.style.opacity = 0;
+      subEl.style.opacity = 0;
 
-    let i = 0;
-    let lineChar = 0;
-    let showingPersonalInfo = false;
-    let piIndex = 0;
+      setTimeout(() => {
+        currentIndex = (currentIndex + 1) % titles.length;
+        titleEl.innerText = titles[currentIndex];
+        subEl.innerText = subtitles[currentIndex];
+        titleEl.style.opacity = 1;
+        subEl.style.opacity = 1;
+      }, 500);
+    }
 
-    function typeLine() {
-      if (i < lines.length) {
-        const line = lines[i];
+    setInterval(switchText, 6000);
 
-        if (lineChar < line.length) {
-          terminal.innerHTML += line[lineChar++];
-          typeSound.currentTime = 0;
-          typeSound.play();
-          setTimeout(typeLine, 30);
-        } else {
-          terminal.innerHTML += "\n";
-          if (line.includes("free():")) {
-            beepSound.currentTime = 0;
-            beepSound.play();
-          }
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    }
 
-          if (line.includes("UNLOCKING...")) {
-            waitForNext();
-          } else {
-            i++;
-            lineChar = 0;
-            setTimeout(typeLine, 300);
-          }
+    // Dot nav logic
+    const sections = ['hero', 'contact'];
+    const dotMap = {
+      hero: document.getElementById('dot-hero'),
+      contact: document.getElementById('dot-contact'),
+    };
+
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      for (let id of sections) {
+        const sec = document.getElementById(id);
+        const offset = sec.offsetTop;
+        const height = sec.offsetHeight;
+        if (scrollY >= offset - height / 2 && scrollY < offset + height / 2) {
+          for (let d in dotMap) dotMap[d].classList.remove('active');
+          dotMap[id].classList.add('active');
         }
       }
-    }
-
-    function waitForNext() {
-      input.style.display = "block";
-      input.focus();
-      input.addEventListener("keydown", function handler(e) {
-        if (e.key === "Enter" && input.value.trim().toLowerCase() === "next") {
-          input.removeEventListener("keydown", handler);
-          input.style.display = "none";
-          terminal.innerHTML += "> " + input.value.trim() + "\n";
-          showingPersonalInfo = true;
-          showPersonalInfo();
-        }
-      });
-    }
-
-    function showPersonalInfo() {
-      if (piIndex < personalInfo.length) {
-        terminal.innerHTML += personalInfo[piIndex++] + "\n";
-        typeSound.currentTime = 0;
-        typeSound.play();
-        setTimeout(showPersonalInfo, 150);
-      } else {
-        terminal.innerHTML += "\n>_ <span class='cursor'></span>";
-      }
-    }
-
-    typeLine();
+    });
   </script>
 </body>
 </html>
